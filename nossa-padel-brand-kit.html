@@ -706,6 +706,31 @@
     /* colophon */
     .logo-anatomy { padding: 24px 16px; }
   }
+
+  /* ── HORIZONTAL SCROLL WRAPPERS ────────────────────── */
+  .scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* top-mirror scrollbar ribbon */
+  .scroll-x-top {
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 14px;
+    border-radius: 7px;
+    margin-bottom: 6px;
+    background: var(--off-white, #F5F4F0);
+    scrollbar-width: thin;
+    scrollbar-color: #888 transparent;
+  }
+  .scroll-x-top > div { height: 1px; pointer-events: none; }
+  .scroll-x-top::-webkit-scrollbar        { height: 6px; }
+  .scroll-x-top::-webkit-scrollbar-track  { background: var(--off-white, #F5F4F0); border-radius: 3px; }
+  .scroll-x-top::-webkit-scrollbar-thumb  { background: #999; border-radius: 3px; }
+  /* keep native bottom scrollbar thin too */
+  .scroll-x::-webkit-scrollbar       { height: 4px; }
+  .scroll-x::-webkit-scrollbar-track { background: transparent; }
+  .scroll-x::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -886,7 +911,7 @@
   <div class="divider"></div>
 
   <div class="tag">Type Scale</div>
-  <div class="type-scale" style="margin-top:16px;">
+  <div class="scroll-x" style="margin-top:16px;"><div class="type-scale" style="min-width:520px;">
     <div class="type-scale-row">
       <span class="type-scale-name">Display</span>
       <span style="font-size:52px;font-weight:700;letter-spacing:-0.03em;line-height:1;">NOSSA</span>
@@ -917,7 +942,7 @@
       <span class="type-caption">Product · NOSSA Core · SKU-001</span>
       <span class="type-scale-size">11–12px / UC / tracked</span>
     </div>
-  </div>
+  </div></div>
 </div>
 
 <!-- ══ 04 · LOGO SYSTEM ═══════════════════════════════════════════ -->
@@ -983,7 +1008,7 @@
   <h2 class="section-title">Design Language</h2>
 
   <div class="tag" style="margin-bottom:12px;">Navigation</div>
-  <div class="nav-mockup" style="margin-bottom:32px;">
+  <div class="scroll-x" style="margin-bottom:32px;"><div class="nav-mockup" style="min-width:560px;">
     <div style="background:var(--black);color:var(--white);text-align:center;padding:10px;font-size:11px;letter-spacing:0.1em;font-weight:500;">Join the NOSSA Community free. Get 10% off. Valid 48 hours. →</div>
     <div class="nav-bar">
       <div class="nav-links">
@@ -998,22 +1023,22 @@
         <span class="nav-icon">🛒</span>
       </div>
     </div>
-  </div>
+  </div></div>
 
   <div class="tag" style="margin-bottom:12px;">Buttons</div>
-  <div class="component-row" style="margin-bottom:4px;">
+  <div class="scroll-x"><div class="component-row" style="margin-bottom:4px;min-width:480px;">
     <button class="btn btn-primary">Shop Now</button>
     <button class="btn btn-outline">View All</button>
     <button class="btn btn-primary btn-sm">Add to Cart</button>
     <button class="btn btn-outline btn-sm">Learn More</button>
     <button class="btn btn-primary btn-lg">Join Community</button>
-  </div>
-  <div class="component-row dark" style="margin-bottom:32px;">
+  </div></div>
+  <div class="scroll-x" style="margin-bottom:32px;"><div class="component-row dark" style="min-width:480px;">
     <button class="btn btn-white">Shop Now</button>
     <button class="btn btn-outline-white">View All</button>
     <button class="btn btn-white btn-sm">Add to Cart</button>
     <button class="btn btn-outline-white btn-sm">Learn More</button>
-  </div>
+  </div></div>
 
   <div class="tag" style="margin-bottom:12px;">Product Tiles</div>
   <div class="grid-3">
@@ -1051,7 +1076,7 @@
 
   <div class="divider"></div>
   <div class="tag" style="margin-bottom:16px;">Spacing Scale</div>
-  <div class="spacing-demo">
+  <div class="scroll-x"><div class="spacing-demo" style="min-width:560px;">
     <div class="sp-block"><div class="sp-bar" style="height:4px;"></div><div class="sp-val">4<br>xs</div></div>
     <div class="sp-block"><div class="sp-bar" style="height:8px;"></div><div class="sp-val">8<br>sm</div></div>
     <div class="sp-block"><div class="sp-bar" style="height:16px;"></div><div class="sp-val">16<br>md</div></div>
@@ -1061,7 +1086,7 @@
     <div class="sp-block"><div class="sp-bar" style="height:60px;"></div><div class="sp-val">60<br>3xl</div></div>
     <div class="sp-block"><div class="sp-bar" style="height:80px;"></div><div class="sp-val">80<br>4xl</div></div>
     <div class="sp-block"><div class="sp-bar" style="height:100px;"></div><div class="sp-val">100<br>section</div></div>
-  </div>
+  </div></div>
   <p style="font-size:12px;color:var(--dark-grey);margin-top:12px;font-family:var(--font-mono);letter-spacing:0.05em;">All values in pixels. Grid gap: 24px standard, 4px for photo mosaics. Section padding: 100px vertical / 60px horizontal.</p>
 </div>
 
@@ -1225,5 +1250,48 @@
   <div class="footer-copy">Brand Kit &amp; Style Guide · Version 1.0 · 2026 · Nossa Padel Ltd</div>
 </footer>
 
+<script>
+// Mirror top scrollbar for all .scroll-x wrappers
+(function () {
+  function initTopScrollbar(scrollEl) {
+    // Only add on mobile-width viewports, but always attach event — CSS hides
+    var mirror = document.createElement('div');
+    mirror.className = 'scroll-x-top';
+    var inner = document.createElement('div');
+    mirror.appendChild(inner);
+    scrollEl.parentNode.insertBefore(mirror, scrollEl);
+
+    function syncWidth() {
+      inner.style.width = scrollEl.scrollWidth + 'px';
+    }
+    syncWidth();
+    window.addEventListener('resize', syncWidth);
+
+    var syncing = false;
+    mirror.addEventListener('scroll', function () {
+      if (syncing) return;
+      syncing = true;
+      scrollEl.scrollLeft = mirror.scrollLeft;
+      syncing = false;
+    });
+    scrollEl.addEventListener('scroll', function () {
+      if (syncing) return;
+      syncing = true;
+      mirror.scrollLeft = scrollEl.scrollLeft;
+      syncing = false;
+    });
+  }
+
+  function init() {
+    document.querySelectorAll('.scroll-x').forEach(initTopScrollbar);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
 </body>
 </html>
