@@ -206,7 +206,8 @@
     gap: 0;
     background: var(--white);
     border: 1px solid var(--mid-grey);
-    overflow: hidden;
+    overflow: visible; /* allow large glyphs to breathe */
+    border-radius: 4px;
   }
   .type-scale-row {
     display: grid;
@@ -215,6 +216,8 @@
     gap: 24px;
     padding: 20px 28px;
     border-bottom: 1px solid var(--light-grey);
+    min-height: 72px;  /* keeps rows from collapsing under large samples */
+    overflow: hidden;  /* clip per-row so large glyphs don't bleed into neighbours */
   }
   .type-scale-row:last-child { border-bottom: none; }
   .type-scale-name { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dark-grey); }
@@ -920,14 +923,14 @@
 
   <div class="tag">Type Scale</div>
   <div class="scroll-x" style="margin-top:16px;"><div class="type-scale" style="min-width:520px;">
-    <div class="type-scale-row">
+    <div class="type-scale-row" style="padding:28px 28px;">
       <span class="type-scale-name">Display</span>
-      <span style="font-size:52px;font-weight:700;letter-spacing:-0.03em;line-height:1;">NOSSA</span>
+      <span style="font-size:52px;font-weight:700;letter-spacing:-0.03em;line-height:1.1;display:block;">NOSSA</span>
       <span class="type-scale-size">52–96px / 700</span>
     </div>
     <div class="type-scale-row">
       <span class="type-scale-name">H1</span>
-      <span style="font-size:36px;font-weight:700;letter-spacing:-0.02em;">The Social Sport</span>
+      <span style="font-size:36px;font-weight:700;letter-spacing:-0.02em;display:block;">The Social Sport</span>
       <span class="type-scale-size">36px / 700</span>
     </div>
     <div class="type-scale-row">
@@ -994,7 +997,7 @@
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+  <div class="scroll-x"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;min-width:540px;">
     <div class="logo-rule">
       <span class="rule-icon">✓</span>
       <div class="rule-text"><strong>Do: Maintain clear space</strong>Always preserve a minimum clear zone equal to the cap-height of 'N' around the full logo.</div>
@@ -1007,7 +1010,7 @@
       <span class="rule-icon">✗</span>
       <div class="rule-text"><strong>Don't: Stretch, rotate, or recolour</strong>Never alter proportions, add effects, use product accent colours, or place on busy backgrounds.</div>
     </div>
-  </div>
+  </div></div>
 </div>
 
 <!-- ══ 05 · UI COMPONENTS ════════════════════════════════════════ -->
