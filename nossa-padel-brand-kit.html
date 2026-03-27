@@ -711,26 +711,34 @@
   .scroll-x {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    /* hide native bottom scrollbar — replaced by custom track above */
+    scrollbar-width: none;
   }
-  /* top-mirror scrollbar ribbon */
-  .scroll-x-top {
-    overflow-x: auto;
-    overflow-y: hidden;
-    height: 14px;
-    border-radius: 7px;
-    margin-bottom: 6px;
-    background: var(--off-white, #F5F4F0);
-    scrollbar-width: thin;
-    scrollbar-color: #888 transparent;
+  .scroll-x::-webkit-scrollbar { display: none; }
+
+  /* custom scroll track (rendered above each wide section by JS) */
+  .scroll-track {
+    position: relative;
+    height: 6px;
+    background: #E8E7E3;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: none; /* JS shows it only when content overflows */
   }
-  .scroll-x-top > div { height: 1px; pointer-events: none; }
-  .scroll-x-top::-webkit-scrollbar        { height: 6px; }
-  .scroll-x-top::-webkit-scrollbar-track  { background: var(--off-white, #F5F4F0); border-radius: 3px; }
-  .scroll-x-top::-webkit-scrollbar-thumb  { background: #999; border-radius: 3px; }
-  /* keep native bottom scrollbar thin too */
-  .scroll-x::-webkit-scrollbar       { height: 4px; }
-  .scroll-x::-webkit-scrollbar-track { background: transparent; }
-  .scroll-x::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+  .scroll-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    min-width: 44px;
+    background: #1A1916;
+    border-radius: 3px;
+    cursor: grab;
+    transition: background 0.15s;
+  }
+  .scroll-thumb:hover  { background: #333; }
+  .scroll-thumb:active { background: #000; cursor: grabbing; }
 </style>
 </head>
 <body>
@@ -1251,39 +1259,74 @@
 </footer>
 
 <script>
-// Mirror top scrollbar for all .scroll-x wrappers
+// Custom always-visible top scrollbar for .scroll-x wrappers
 (function () {
-  function initTopScrollbar(scrollEl) {
-    // Only add on mobile-width viewports, but always attach event — CSS hides
-    var mirror = document.createElement('div');
-    mirror.className = 'scroll-x-top';
-    var inner = document.createElement('div');
-    mirror.appendChild(inner);
-    scrollEl.parentNode.insertBefore(mirror, scrollEl);
+  function initScrollTrack(scrollEl) {
+    var track = document.createElement('div');
+    track.className = 'scroll-track';
+    var thumb = document.createElement('div');
+    thumb.className = 'scroll-thumb';
+    track.appendChild(thumb);
+    scrollEl.parentNode.insertBefore(track, scrollEl);
 
-    function syncWidth() {
-      inner.style.width = scrollEl.scrollWidth + 'px';
+    function update() {
+      var ratio = scrollEl.clientWidth / scrollEl.scrollWidth;
+      if (ratio >= 0.99) { track.style.display = 'none'; return; }
+      track.style.display = 'block';
+      var thumbW = Math.max(ratio * track.offsetWidth, 44);
+      var maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
+      var scrollFrac = maxScroll > 0 ? scrollEl.scrollLeft / maxScroll : 0;
+      var maxLeft = track.offsetWidth - thumbW;
+      thumb.style.width = thumbW + 'px';
+      thumb.style.transform = 'translateX(' + (scrollFrac * maxLeft) + 'px)';
     }
-    syncWidth();
-    window.addEventListener('resize', syncWidth);
 
-    var syncing = false;
-    mirror.addEventListener('scroll', function () {
-      if (syncing) return;
-      syncing = true;
-      scrollEl.scrollLeft = mirror.scrollLeft;
-      syncing = false;
-    });
-    scrollEl.addEventListener('scroll', function () {
-      if (syncing) return;
-      syncing = true;
-      mirror.scrollLeft = scrollEl.scrollLeft;
-      syncing = false;
+    scrollEl.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
+    // Run after images/fonts load so scrollWidth is accurate
+    window.addEventListener('load', update);
+    update();
+
+    // ── drag on thumb ────────────────────────────────────
+    function startDrag(e) {
+      var isTouch = e.touches;
+      var startClientX = isTouch ? e.touches[0].clientX : e.clientX;
+      var startScrollLeft = scrollEl.scrollLeft;
+      var thumbW = thumb.offsetWidth;
+      var maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
+      var maxLeft = track.offsetWidth - thumbW;
+
+      function onMove(e) {
+        var x = e.touches ? e.touches[0].clientX : e.clientX;
+        var delta = x - startClientX;
+        scrollEl.scrollLeft = Math.max(0, Math.min(maxScroll,
+          startScrollLeft + (delta / maxLeft) * maxScroll));
+      }
+      function onEnd() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onEnd);
+      document.addEventListener('touchmove', onMove, { passive: true });
+      document.addEventListener('touchend', onEnd);
+    }
+    thumb.addEventListener('mousedown', startDrag);
+    thumb.addEventListener('touchstart', startDrag, { passive: true });
+
+    // ── click on track to jump ───────────────────────────
+    track.addEventListener('click', function (e) {
+      if (e.target === thumb) return;
+      var rect = track.getBoundingClientRect();
+      var frac = (e.clientX - rect.left) / track.offsetWidth;
+      scrollEl.scrollLeft = frac * (scrollEl.scrollWidth - scrollEl.clientWidth);
     });
   }
 
   function init() {
-    document.querySelectorAll('.scroll-x').forEach(initTopScrollbar);
+    document.querySelectorAll('.scroll-x').forEach(initScrollTrack);
   }
 
   if (document.readyState === 'loading') {
