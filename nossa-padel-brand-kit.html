@@ -584,11 +584,127 @@
     text-transform: uppercase;
     margin-bottom: 16px;
   }
+  /* ── TABLET (≤900px) ─────────────────────────────── */
   @media (max-width: 900px) {
     .section { padding: 60px 24px; }
     .cover { padding: 32px 24px; }
-    .grid-2, .grid-3, .grid-4, .photo-grid, .voice-pillars, .photo-principles, .do-dont { grid-template-columns: 1fr; }
+    .grid-2, .grid-3, .grid-4, .photo-grid, .voice-pillars,
+    .photo-principles, .do-dont { grid-template-columns: 1fr; }
     .photo-card.tall { grid-row: auto; }
+    .photo-card img { height: 260px !important; }
+
+    /* type scale rows — stack label/size below sample */
+    .type-scale-row {
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      gap: 8px 16px;
+    }
+    .type-scale-row .type-scale-name { grid-column: 1; grid-row: 2; }
+    .type-scale-row .type-scale-size { grid-column: 2; grid-row: 2; text-align: right; }
+    .type-scale-row > *:first-child + * { grid-column: 1 / -1; grid-row: 1; }
+
+    /* logo anatomy */
+    .anatomy-grid { grid-template-columns: 80px 1fr; gap: 20px; }
+    .anatomy-icon img { width: 60px; }
+
+    /* nav mockup — hide nav links, shrink */
+    .nav-bar { padding: 0 20px; }
+    .nav-links { display: none; }
+
+    /* spacing demo — allow wrap */
+    .spacing-demo { flex-wrap: wrap; gap: 16px; }
+
+    /* colophon grid */
+    .logo-demo { padding: 40px 24px; }
+
+    /* component rows */
+    .component-row { flex-wrap: wrap; gap: 12px; padding: 24px; }
+
+    /* product swatch row */
+    .product-swatch-row { gap: 12px; }
+    .ps-circle { width: 44px; height: 44px; }
+
+    /* voice examples */
+    .voice-example { padding: 24px 20px; }
+    .voice-quote { font-size: 16px; }
+  }
+
+  /* ── MOBILE (≤480px) ─────────────────────────────── */
+  @media (max-width: 480px) {
+    .section { padding: 48px 16px; }
+    .cover { padding: 28px 16px; min-height: auto; }
+    .cover-title { font-size: clamp(36px, 12vw, 60px); }
+    .cover-subtitle { font-size: 14px; }
+    .cover-meta { flex-direction: column; gap: 8px; }
+    h2.section-title { font-size: clamp(26px, 7vw, 38px); margin-bottom: 32px; }
+
+    /* type specimens */
+    .type-specimen { padding: 28px 20px; }
+    .type-display { font-size: clamp(36px, 10vw, 56px); }
+    .type-label { flex-direction: column; gap: 4px; font-size: 9px; }
+
+    /* type scale — single column, hide size */
+    .type-scale-row {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      gap: 4px;
+      padding: 16px 20px;
+    }
+    .type-scale-row .type-scale-name { grid-row: 1; }
+    .type-scale-row > *:first-child + * { font-size: clamp(18px, 5vw, 32px) !important; }
+    .type-scale-row .type-scale-size { display: none; }
+
+    /* color cards — 2 columns */
+    .grid-4 { grid-template-columns: 1fr 1fr; }
+    .color-swatch { height: 100px; }
+    .color-info { padding: 12px; }
+    .color-name { font-size: 11px; }
+
+    /* logo system */
+    .logo-demo { padding: 32px 16px; }
+    .logo-demo img { max-height: 52px; }
+    .anatomy-grid { grid-template-columns: 1fr; }
+    .anatomy-icon { justify-content: flex-start; margin-bottom: 8px; }
+    .logo-rule { padding: 16px 20px; gap: 12px; }
+
+    /* nav mockup — just show bar */
+    .nav-bar { height: 52px; padding: 0 16px; }
+    .nav-logo img { height: 22px; }
+    .nav-utils { gap: 14px; }
+
+    /* buttons */
+    .component-row { padding: 20px 16px; gap: 10px; }
+    .btn { padding: 12px 20px; font-size: 11px; }
+    .btn-lg { padding: 14px 24px; font-size: 12px; }
+
+    /* product tiles */
+    .product-img { height: 200px; }
+    .product-info { padding: 16px 18px; }
+
+    /* spacing demo */
+    .spacing-demo { padding: 24px 16px; gap: 12px; }
+    .sp-bar { width: 28px; }
+
+    /* photography */
+    .photo-card img { height: 220px !important; }
+    .photo-principles { grid-template-columns: 1fr; }
+
+    /* voice */
+    .voice-pillars { gap: 2px; }
+    .pillar { padding: 24px 18px; }
+    .pillar-keyword { font-size: 18px; }
+    .do-dont { grid-template-columns: 1fr; }
+    .do-card, .dont-card { padding: 20px 18px; }
+
+    /* product hierarchy */
+    .product-swatch-row { flex-wrap: wrap; gap: 10px; }
+
+    /* footer */
+    footer { padding: 40px 16px; }
+    footer .footer-logo img { height: 28px; }
+
+    /* colophon */
+    .logo-anatomy { padding: 24px 16px; }
   }
 </style>
 </head>
